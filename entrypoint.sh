@@ -51,5 +51,6 @@ if [ "${UID}" -eq 0 ]; then
     exec su -s /bin/bash "${JIRA_AGENT_USER}" -c java -jar "${JIRA_AGENT_INSTALL}/${JIRA_AGENT_JAR} ${JIRA_AGENT_SERVER} ${ARGS}"
 else
     echo "Executing with default permissions"
+    chown -R "${JIRA_AGENT_USER}:${JIRA_AGENT_GROUP}" "${JIRA_SHARED_HOME}"
     exec "${JIRA_INSTALL}"/bin/start-jira.sh ${ARGS}
 fi
