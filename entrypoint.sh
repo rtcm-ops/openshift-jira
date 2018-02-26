@@ -26,30 +26,7 @@ JAVA_OPTS="${JAVA_OPTS} ${CATALINA_OPTS}"
 
 ARGS="$@"
 
-# configure clustering if properties file was specified
-if [ -n "${JIRA_CLUSTER_CONFIG}" ]; then
-    NEW_NODE_ID=$(uuidgen)
-    echo "jira.node.id=${NEW_NODE_ID}" >> "${JIRA_CLUSTER_CONFIG}"
-    echo "jira.shared.home=${JIRA_SHARED_HOME}" >> "${JIRA_CLUSTER_CONFIG}"
-    echo "${JIRA_CLUSTER_CONFIG}:"
-    cat "${JIRA_CLUSTER_CONFIG}"
-fi
 
-# Start jira as the correct user. old_: "${UID}" -eq 0
-if [ "${UID}" -eq 1 ]; then
-    echo "User is currently root. Will change directory ownership to ${JIRA_AGENT_USER}:${JIRA_AGENT_GROUP}, then downgrade permission to ${JIRA_AGENT_USER}"
-    PERMISSIONS_SIGNATURE=$(stat -c "%u:%U:%a" "${JIRA_AGENT_HOME}")
-    EXPECTED_PERMISSIONS=$(id -u ${JIRA_AGENT_USER}):${JIRA_AGENT_USER}:700
-    if [ "${PERMISSIONS_SIGNATURE}" != "${EXPECTED_PERMISSIONS}" ]; then
-        echo "Updating permissions for JIRA_AGENT_HOME"
-        mkdir -p "${JIRA_AGENT_HOME}/lib" &&
-            chmod -R 700 "${JIRA_AGENT_HOME}" &&
-            chown -R "${JIRA_AGENT_USER}:${JIRA_AGENT_GROUP}" "${JIRA_AGENT_HOME}"
-    fi
-    # Now drop privileges
-    echo "Executing with downgraded permissions"
-    exec su -s /bin/bash "${JIRA_AGENT_USER}" -c java -jar "${JIRA_AGENT_INSTALL}/${JIRA_AGENT_JAR} ${JIRA_AGENT_SERVER} ${ARGS}"
-else
-    echo "Executing with default permissions"
-    exec "${JIRA_INSTALL}"/bin/start-jira.sh ${ARGS}
-fi
+echo "Executing with default permissions"
+exec "${JIRA_INSTALL}"/bin/start-jira.sh ${ARGS}
+
