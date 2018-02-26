@@ -35,8 +35,8 @@ if [ -n "${JIRA_CLUSTER_CONFIG}" ]; then
     cat "${JIRA_CLUSTER_CONFIG}"
 fi
 
-# Start jira as the correct user.
-if [ "${UID}" -eq 0 ]; then
+# Start jira as the correct user. old_: "${UID}" -eq 0
+if [ "${UID}" -eq 1 ]; then
     echo "User is currently root. Will change directory ownership to ${JIRA_AGENT_USER}:${JIRA_AGENT_GROUP}, then downgrade permission to ${JIRA_AGENT_USER}"
     PERMISSIONS_SIGNATURE=$(stat -c "%u:%U:%a" "${JIRA_AGENT_HOME}")
     EXPECTED_PERMISSIONS=$(id -u ${JIRA_AGENT_USER}):${JIRA_AGENT_USER}:700
