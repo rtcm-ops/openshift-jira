@@ -30,6 +30,7 @@ RUN JIRA_URL=https://www.atlassian.com/software/jira/downloads/binary/atlassian-
 && chmod -R 777 ${JIRA_INSTALL} \
 && chown -R ${RUN_USER}:${RUN_GROUP} ${JIRA_HOME} \
 && chmod -R 777 ${JIRA_HOME} \
+&& chmod -R 777 ${JIRA_SHARED_HOME} \
 && yum update -y \
 && yum install -y git wget openssl unzip nano net-tools tini telnet which dejavu-* \
 && yum clean all \
